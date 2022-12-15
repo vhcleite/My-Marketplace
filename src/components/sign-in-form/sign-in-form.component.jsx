@@ -1,12 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import "./sign-in-form.styles.scss";
 import FormInput from "../form-input/form-input.component";
 import {
   signInWithGooglePopup,
   signInAuthWithEmailAndPassword,
-  createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
-import { UserContext } from "../contexts/user.context";
 import Button from "../button/button.component";
 
 const SignInForm = () => {
@@ -15,15 +13,11 @@ const SignInForm = () => {
     password: "",
   };
 
-  const { setCurrentUser } = useContext(UserContext);
-
   const [formFields, setFormFields] = useState(defaultFormFields);
 
   const signInWithGoogle = async () => {
     console.log("sign in with google");
-    const { user } = await signInWithGooglePopup();
-    console.log({ user });
-    await createUserDocumentFromAuth(user);
+    await signInWithGooglePopup();
   };
 
   const resetForm = () => {
@@ -34,11 +28,10 @@ const SignInForm = () => {
     event.preventDefault();
     console.log("sign in with email");
     try {
-      const { user } = await signInAuthWithEmailAndPassword(
+      await signInAuthWithEmailAndPassword(
         formFields.email,
         formFields.password
       );
-      setCurrentUser(user);
       resetForm();
     } catch (error) {
       switch (error.code) {
